@@ -7,7 +7,8 @@ import AdminLogin from './pages/Admin/AdminLogin';
 import Dashboard from './pages/Admin/Dashboard';
 import CreateTest from './pages/Admin/CreateTest';
 import LobbyControl from './pages/Admin/LobbyControl';
-// import StudentLogin from './pages/Student/StudentLogin';
+import StudentLogin from './pages/Student/StudentLogin';
+import WaitingRoom from './pages/Student/WaitingRoom';
 // import ExamPortal from './pages/Student/ExamPortal';
 
 const App = () => {
@@ -23,8 +24,9 @@ const App = () => {
             <Route path="/admin/lobby/:testCode" element={<LobbyControl />} />
 
             {/* Student Routes */}
-            <Route path="/" element={<div>Student Login (TODO)</div>} />
-            <Route path="/exam/:testCode" element={<div>Exam Portal (TODO)</div>} />
+            <Route path="/" element={<StudentLogin />} />
+            <Route path="/exam/lobby/:testCode" element={<WaitingRoom />} />
+            <Route path="/exam/attempt/:testCode" element={<div>Exam Portal (TODO)</div>} />
 
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" />} />
