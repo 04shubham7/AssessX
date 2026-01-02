@@ -6,6 +6,7 @@ import { SocketProvider } from './context/SocketContext';
 import AdminLogin from './pages/Admin/AdminLogin';
 import Dashboard from './pages/Admin/Dashboard';
 import CreateTest from './pages/Admin/CreateTest';
+import LobbyControl from './pages/Admin/LobbyControl';
 // import StudentLogin from './pages/Student/StudentLogin';
 // import ExamPortal from './pages/Student/ExamPortal';
 
@@ -19,6 +20,7 @@ const App = () => {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/create-test" element={<CreateTest />} />
+            <Route path="/admin/lobby/:testCode" element={<LobbyControl />} />
 
             {/* Student Routes */}
             <Route path="/" element={<div>Student Login (TODO)</div>} />

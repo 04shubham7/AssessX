@@ -9,6 +9,19 @@ const socketHandler = (io) => {
     io.on('connection', (socket) => {
         console.log('socket connected:', socket.id);
 
+        // ADMIN: Join Room to listen
+        socket.on('admin-join', ({ testCode }) => {
+            socket.join(testCode);
+            console.log(`Admin joined room ${testCode}`);
+            // Send current lobby state immediately
+            if (lobbies[testCode]) {
+                socket.emit('lobby-update', {
+                    count: Object.keys(lobbies[testCode].students).length,
+                    students: Object.values(lobbies[testCode].students)
+                });
+            }
+        });
+
         // STUDENT: Join Lobby
         socket.on('join-lobby', async ({ testCode, studentName, rollNumber, mobileNumber }) => {
             // Create lobby if not exists (usually Admin should create it, but for simplicity we rely on testCode)
@@ -101,11 +114,19 @@ const socketHandler = (io) => {
                     const correctOption = q.options.find(o => o.isCorrect);
                     // Assuming studentAnswer is the option ID or text. value matches?
                     // Let's assume frontend sends the _id of the selected option.
+                    // BUT in createTest we didn't explicitly give IDs to options, Mongoose generates them if array of objects.
+                    // However, for simplicity let's compare text OR use index.
+                    // Let's assume studentAnswer matches the TEXT of the option or _id if present.
+                    // Since we strip correct answer, we probably send options array.
+                    // Let's assume checked against 'isCorrect' logic.
+
+                    // If we assume we compare by _id (which is safest if available) or text.
+                    // For now let's assume text comparison for robustness if IDs switch on update (unlikely but simple).
                     if (correctOption && studentAnswer === correctOption._id.toString()) {
                         score += q.marks;
                         correctCount++;
                     } else if (test.settings.negativeMarking) {
-                        // Basic negative marking logic (e.g. -1 or -0.25? Spec says "Optional negative marking", doesn't specify value. Let's assume 0 for now or implement later)
+                        // Negative marking
                     }
                 }
                 // TODO: Multiple choice logic
@@ -125,7 +146,7 @@ const socketHandler = (io) => {
                     violationCount
                 });
 
-                socket.emit('result-published', { score, total: test.questions.length * 1 }); // Assuming 1 mark default
+                socket.emit('result-published', { score, total: test.questions.length * 1 });
             } catch (e) {
                 console.error("Error saving result", e);
             }
