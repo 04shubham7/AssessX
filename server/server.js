@@ -32,14 +32,10 @@ app.get('/', (req, res) => {
     res.send('AssessX API is running');
 });
 
-// Socket.IO Connection
-io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id);
+const socketHandler = require('./socket/socketHandler');
 
-    socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
-    });
-});
+// Socket.IO Connection
+socketHandler(io);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
