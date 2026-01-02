@@ -18,6 +18,9 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
 // Database Connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/assessx')
     .then(() => console.log('MongoDB Connected'))
