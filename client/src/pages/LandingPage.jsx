@@ -1,75 +1,73 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Shield, Zap, Users, Monitor, ArrowRight, CheckCircle } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Hero3D from '../components/Hero3D';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const LandingPage = () => {
+    const containerRef = useRef(null);
+
+    // GSAP Animation Example (complementing Framer Motion)
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.from(".feature-card", {
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                scrollTrigger: {
+                    trigger: ".features-grid",
+                    start: "top 80%",
+                }
+            });
+        }, containerRef);
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 font-sans overflow-x-hidden">
-            {/* Header */}
-            <header className="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center">
-                            <Shield className="h-8 w-8 text-indigo-600" />
-                            <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
-                                AssessX
-                            </span>
-                        </div>
-                        <div className="flex space-x-4">
-                            <Link to="/auth/login">
-                                <button className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
-                                    Login
-                                </button>
-                            </Link>
-                            <Link to="/auth/register">
-                                <button className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-shadow shadow-md hover:shadow-lg">
-                                    Sign Up
-                                </button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
+        <div ref={containerRef} className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans overflow-x-hidden transition-colors duration-300">
+            {/* Header - Navbar handles this now */}
 
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 lg:pt-48 overflow-hidden">
-                <div className="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full bg-gradient-to-b from-indigo-50 to-white -z-10" />
-                <div className="absolute -top-20 -left-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob" />
-                <div className="absolute top-20 -right-20 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000" />
-                <div className="absolute -bottom-32 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000" />
+            <section className="relative pt-32 pb-20 lg:pt-48 overflow-hidden min-h-[90vh] flex items-center">
+                <Hero3D />
+                <div className="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full bg-gradient-to-b from-indigo-50/50 to-white/0 dark:from-gray-900/50 dark:to-gray-900/0 -z-[2]" />
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6">
+                        <h1 className="text-5xl md:text-8xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6 drop-shadow-sm">
                             The Future of <br className="hidden md:block" />
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-                                Secure & Real-time Exams
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400">
+                                Secure Exams
                             </span>
                         </h1>
-                        <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-500 mb-8">
+                        <p className="mt-6 max-w-2xl mx-auto text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed">
                             Seamlessly conduct online assessments with live proctoring, instant results, and comprehensive analytics.
                         </p>
 
-                        <div className="flex justify-center flex-wrap gap-4">
+                        <div className="flex justify-center flex-wrap gap-6">
                             <Link to="/auth/register">
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="px-8 py-4 text-lg font-bold text-white bg-indigo-600 rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center"
+                                    className="px-8 py-4 text-lg font-bold text-white bg-indigo-600 rounded-full shadow-lg hover:shadow-indigo-500/50 transition-all flex items-center"
                                 >
-                                    Get Started for Free <ArrowRight className="ml-2 w-5 h-5" />
+                                    Get Started Free <ArrowRight className="ml-2 w-5 h-5" />
                                 </motion.button>
                             </Link>
                             <Link to="/student">
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="px-8 py-4 text-lg font-bold text-indigo-700 bg-white border border-indigo-100 rounded-full shadow-lg hover:shadow-xl transition-all"
+                                    className="px-8 py-4 text-lg font-bold text-indigo-700 dark:text-indigo-300 bg-white dark:bg-gray-800 border border-indigo-100 dark:border-gray-700 rounded-full shadow-lg hover:shadow-xl transition-all"
                                 >
                                     Join a Test
                                 </motion.button>
@@ -80,32 +78,44 @@ const LandingPage = () => {
             </section>
 
             {/* Features Grid */}
-            <section className="py-20 bg-white">
+            <section className="py-32 bg-white dark:bg-gray-800 transition-colors duration-300 relative">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-base font-semibold text-indigo-600 tracking-wide uppercase">Features</h2>
-                        <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                            Everything you need to assess talent
-                        </p>
+                    <div className="text-center mb-20">
+                        <motion.h2
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="text-base font-bold text-indigo-600 dark:text-indigo-400 tracking-wide uppercase"
+                        >
+                            Features
+                        </motion.h2>
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="mt-2 text-4xl leading-8 font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl"
+                        >
+                            Everything needed to assess talent
+                        </motion.p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="features-grid grid grid-cols-1 md:grid-cols-3 gap-10">
                         {[
                             { icon: Zap, title: "Real-time Sync", desc: "Live student monitoring via Socket.IO. See who joins and leaves instantly." },
                             { icon: Shield, title: "Anti-Cheating", desc: "Tab-switch detection, fullscreen enforcement, and copy-paste prevention." },
                             { icon: Monitor, title: "Instant Analysis", desc: "Get detailed reports and leaderboards immediately after the test concludes." }
                         ].map((feature, idx) => (
-                            <motion.div
+                            <div
                                 key={idx}
-                                whileHover={{ y: -5 }}
-                                className="p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:shadow-lg transition-all"
+                                className="feature-card p-10 bg-gray-50 dark:bg-gray-700/30 backdrop-blur-sm rounded-3xl border border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group"
                             >
-                                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4 text-indigo-600">
-                                    <feature.icon className="w-6 h-6" />
+                                <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mb-6 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                                    <feature.icon className="w-8 h-8" />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-                                <p className="text-gray-500">{feature.desc}</p>
-                            </motion.div>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{feature.title}</h3>
+                                <p className="text-lg text-gray-500 dark:text-gray-300 leading-relaxed">{feature.desc}</p>
+                            </div>
                         ))}
                     </div>
                 </div>
