@@ -83,9 +83,35 @@ const getTestByCode = async (req, res) => {
     }
 };
 
+// @desc    Delete a test
+// @route   DELETE /api/tests/:id
+// @access  Private
+const deleteTest = async (req, res) => {
+    try {
+        const test = await Test.findById(req.params.id);
+
+        if (!test) {
+            return res.status(404).json({ message: 'Test not found' });
+        }
+
+        // Check ownership
+        if (test.createdBy.toString() !== req.admin.id) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        await test.deleteOne();
+        res.status(200).json({ id: req.params.id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     createTest,
     getTests,
     getTestById,
-    getTestByCode
+    getTestByCode,
+    deleteTest
 };
+
