@@ -103,10 +103,10 @@ const CreateTest = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 transition-colors duration-300">
             <div className="max-w-4xl mx-auto space-y-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Create New Test</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create New Test</h1>
                     <Button onClick={handleSubmit} isLoading={loading}>
                         <Save className="w-4 h-4 mr-2" />
                         Publish Test

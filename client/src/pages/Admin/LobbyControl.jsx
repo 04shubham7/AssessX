@@ -77,7 +77,7 @@ const LobbyControl = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 transition-colors duration-300">
             <div className="max-w-6xl mx-auto space-y-6">
                 <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow">
                     <div>
