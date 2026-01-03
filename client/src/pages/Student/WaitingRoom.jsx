@@ -67,26 +67,26 @@ const WaitingRoom = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
             <div className="text-center space-y-6">
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-24 h-24 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="w-24 h-24 border-4 border-indigo-200 dark:border-indigo-900 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin"></div>
                     </div>
                     <div className="w-24 h-24 flex items-center justify-center">
-                        <Loader2 className="w-8 h-8 text-indigo-600 animate-pulse" />
+                        <Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-pulse" />
                     </div>
                 </div>
 
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">You are in the Lobby</h2>
-                    <p className="text-gray-500 mt-2">{message}</p>
-                    <p className="text-sm text-gray-400 mt-4">Do not refresh or close this window.</p>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">You are in the Lobby</h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-2">{message}</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-4">Do not refresh or close this window.</p>
                 </div>
 
-                <div className="bg-white px-6 py-4 rounded-lg shadow-sm border border-gray-100">
-                    <p className="text-sm font-medium text-gray-600">Joined as:</p>
-                    <p className="text-lg font-bold text-gray-900">{JSON.parse(localStorage.getItem('studentInfo') || '{}').name}</p>
+                <div className="bg-white dark:bg-gray-800 px-6 py-4 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Joined as:</p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">{JSON.parse(localStorage.getItem('studentInfo') || '{}').name}</p>
                 </div>
             </div>
         </div>
