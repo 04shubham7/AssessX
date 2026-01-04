@@ -43,10 +43,10 @@ The application follows a standard **MERN** Service-Oriented Architecture with *
 
 ```mermaid
 graph TD
-    Client[Client (React + Vite)]
-    Server[API Server (Express)]
-    DB[(MongoDB Atlas)]
-    Socket[Socket.io Server]
+    Client["Client (React + Vite)"]
+    Server["API Server (Express)"]
+    DB[("MongoDB Atlas")]
+    Socket["Socket.io Server"]
     
     subgraph Frontend
     Client -->|REST API| Server
@@ -59,7 +59,7 @@ graph TD
     end
     
     subgraph Proctoring
-    Client -- "Webcam Feed (Local)" --> FaceAPI[Face-API.js]
+    Client -- "Webcam Feed (Local)" --> FaceAPI["Face-API.js"]
     FaceAPI -- "Violation Events" --> Socket
     end
 ```
@@ -68,13 +68,13 @@ graph TD
 
 ### 🏠 Landing Page
 The gateway to the platform, featuring a 3D Hero element and gradient-rich design.
-<img src="assets/landing_page_new.png" width="100%" crossorigin="anonymous" />
+![Landing Page](assets/landing_page_new.png)
 
 ### 🔐 Student Experience
 A focused, distraction-free environment for students, available in your preferred theme.
 | Light Mode | Dark Mode |
 |:---:|:---:|
-| <img src="assets/student_login_light.png" width="100%" crossorigin="anonymous" /> | <img src="assets/student_login_dark.png" width="100%" crossorigin="anonymous" /> |
+| ![Student Login Light](assets/student_login_light.png) | ![Student Login Dark](assets/student_login_dark.png) |
 
 ## 🛠️ Technology Stack
 
