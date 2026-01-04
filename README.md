@@ -1,43 +1,108 @@
-# AssessX
+# AssessX 🚀
 
-A comprehensive online assessment platform built with the MERN stack (MongoDB, Express, React, Node.js), featuring real-time capabilities via Socket.io.
+<div align="center">
 
-## Features
+![AssessX Logo](https://via.placeholder.com/150x150?text=AssessX) 
+<!-- Replace with actual logo if available -->
 
-- **Admin Dashboard**: Create and manage tests with various configurations.
-- **Student Portal**: Take tests in a secure environment.
-- **Real-time Updates**: Instant results and monitoring.
-- **Visualizations**: 3D elements and smooth animations.
+### Modern Online Assessment Platform with Real-time Monitoring
 
-## Tech Stack
-- **Frontend**: React, Vite, TailwindCSS, Framer Motion, GSAP, Three.js
-- **Backend**: Node.js, Express, MongoDB
-- **Real-time**: Socket.io
+![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)
 
-## Screenshots
+</div>
 
-### Landing Page
+---
+
+**AssessX** is a cutting-edge assessment platform designed to provide a secure and interactive environment for online testing. Built with the MERN stack and Socket.io, it ensures real-time integrity and instant feedback.
+
+## ✨ Key Features
+
+- **🛡️ Secure Environment**: Real-time monitoring prevents malpractice.
+- **⚡ Real-time Updates**: Instant result calculation and status tracking via Socket.io.
+- **👨‍🏫 Admin Dashboard**: Comprehensive control to create, edit, and manage tests.
+- **👨‍🎓 Student Portal**: Intuitive interface for taking exams with timer and progress saving.
+- **📊 Visual Analytics**: Beautiful charts and graphs for result analysis.
+- **🎨 Modern UI**: Built with TailwindCSS, Framer Motion, and GSAP for a premium feel.
+
+## 🛠️ Technology Stack
+
+| Component | Tech |
+|-----------|------|
+| **Frontend** | React 19, Vite, TailwindCSS, Framer Motion, GSAP, Three.js |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB, Mongoose |
+| **Real-time** | Socket.io |
+| **Authentication** | JWT (JSON Web Tokens) |
+
+## 📸 Screenshots
+
+### 🏠 Landing Page
 ![Landing Page](docs/landing_page.png)
 
-### Student Login
+### 🔐 Student Login
 ![Student Login](docs/student_login.png)
 
-### Admin Login
+### 👨‍💻 Admin Login
 ![Admin Login](docs/admin_login.png)
 
-## Getting Started
+## 🚀 Getting Started
 
-1. **Install Dependencies**:
-   ```bash
-   npm install
-   cd client && npm install
-   ```
+Follow these steps to set up the project locally.
 
-2. **Run Application**:
-   ```bash
-   # Root directory (runs server)
-   npm run start
-   
-   # in /client directory (runs frontend)
-   npm run dev
-   ```
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (Local or Atlas URL)
+
+### Installation
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/04shubham7/AssessX.git
+    cd AssessX
+    ```
+
+2.  **Install Server Dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Install Client Dependencies**
+    ```bash
+    cd client
+    npm install
+    cd ..
+    ```
+
+4.  **Environment Setup**
+    - Create a `.env` file in the `server` directory:
+      ```env
+      PORT=5000
+      MONGO_URI=your_mongodb_connection_string
+      JWT_SECRET=your_secret_key
+      ```
+
+5.  **Run the Application**
+     Open two terminals:
+    
+    *Terminal 1 (Server):*
+    ```bash
+    npm run start
+    ```
+    
+    *Terminal 2 (Client):*
+    ```bash
+    cd client
+    npm run dev
+    ```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the ISC License.
