@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![AssessX Logo](https://via.placeholder.com/150x150?text=AssessX) 
+<!-- ![AssessX Logo](https://via.placeholder.com/150x150?text=AssessX)  -->
 <!-- Replace with actual logo if available -->
 
 ### Modern Online Assessment Platform with Real-time Monitoring
