@@ -24,7 +24,9 @@ const ExamPortal = () => {
             try {
                 const { data } = await axios.get(`http://localhost:5000/api/tests/code/${testCode}`);
                 setTest(data);
-                setTimeLeft(data.duration * 60);
+                if (data.duration) {
+                    setTimeLeft(data.duration * 60);
+                }
             } catch (error) {
                 console.error("Failed to load test");
             }
@@ -86,8 +88,6 @@ const ExamPortal = () => {
 
     const handleViolation = (msg) => {
         violationRef.current += 1;
-        // Optionally auto-submit if too many violations:
-        // if (violationRef.current > 3) handleSubmit(true);
     };
 
     const handleAnswer = (qIdx, value) => {
@@ -98,13 +98,11 @@ const ExamPortal = () => {
         if (submitted) return;
         setSubmitted(true);
 
-        // Calculate final time taken
         const timeTaken = test ? (test.duration * 60 - timeLeft) : 0;
         const minutes = Math.floor(timeTaken / 60);
         const seconds = timeTaken % 60;
         const timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-        // Emit to socket
         if (socket) {
             socket.emit('submit-test', {
                 testCode,
@@ -115,54 +113,54 @@ const ExamPortal = () => {
         }
     };
 
-    if (!test) return <div className="p-8 text-center flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+    if (!test) return <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
     </div>;
 
     return (
         <ProctoringContainer testCode={testCode} onViolation={handleViolation}>
-            <div className="min-h-screen bg-white">
+            <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120] pb-24 transition-colors duration-500">
                 {/* Header */}
-                <header className="bg-white border-b p-4 sticky top-0 z-10 shadow-sm">
+                <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 p-4 sticky top-0 z-30 shadow-sm transition-colors">
                     <div className="max-w-7xl mx-auto flex justify-between items-center">
                         <div>
-                            <h1 className="text-xl font-bold text-gray-800">{test.title}</h1>
-                            <p className="text-sm text-gray-500">Code: {testCode}</p>
+                            <h1 className="text-xl font-bold text-slate-900 dark:text-white">{test.title}</h1>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">Code: {testCode}</p>
                         </div>
 
-                        <div className={`flex items-center space-x-2 text-xl font-mono font-bold ${timeLeft < 60 ? 'text-red-500 animate-pulse' : 'text-indigo-600'}`}>
+                        <div className={`flex items-center space-x-3 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 ${timeLeft < 60 ? 'text-red-500 animate-pulse border-red-500/50' : 'text-indigo-600 dark:text-indigo-400'}`}>
                             <Clock className="w-5 h-5" />
-                            <span>{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
+                            <span className="text-xl font-mono font-bold tracking-wider">{Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}</span>
                         </div>
                     </div>
                 </header>
 
-                <div className="max-w-4xl mx-auto p-6 space-y-8 pb-32 mt-4">
+                <div className="max-w-4xl mx-auto p-6 space-y-8 mt-4">
                     {test.questions.map((q, idx) => (
-                        <div key={idx} className="bg-white border border-gray-100 rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-all">
+                        <div key={idx} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-indigo-500/20 dark:hover:border-indigo-500/20 transition-all duration-300">
                             <div className="flex justify-between items-start mb-6">
-                                <h3 className="text-lg font-medium text-gray-900 leading-relaxed">
-                                    <span className="text-indigo-500 font-bold mr-3">{idx + 1}.</span>
+                                <h3 className="text-lg font-medium text-slate-800 dark:text-slate-100 leading-relaxed max-w-2xl">
+                                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-bold mr-4 text-sm ring-1 ring-indigo-500/20">{idx + 1}</span>
                                     {q.questionText}
                                 </h3>
-                                <span className="text-xs font-semibold bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">{q.marks} Marks</span>
+                                <span className="text-xs font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">{q.marks} Marks</span>
                             </div>
 
-                            <div className="space-y-3 pl-8">
+                            <div className="space-y-4 pl-12">
                                 {q.options.map((opt, oIdx) => (
-                                    <label key={oIdx} className={`group flex items-center space-x-3 p-4 rounded-lg border cursor-pointer transition-all duration-200 ${answers[idx] === opt._id ? 'border-indigo-500 bg-indigo-50/50 ring-1 ring-indigo-500' : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300'}`}>
-                                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${answers[idx] === opt._id ? 'border-indigo-600 bg-indigo-600' : 'border-gray-400 group-hover:border-indigo-400'}`}>
-                                            {answers[idx] === opt._id && <div className="w-2 h-2 bg-white rounded-full" />}
+                                    <label key={oIdx} className={`group flex items-center space-x-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${answers[idx] === opt._id ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 ring-1 ring-indigo-500 dark:ring-indigo-500' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-slate-300 dark:hover:border-slate-600'}`}>
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${answers[idx] === opt._id ? 'border-indigo-600 dark:border-indigo-400 bg-indigo-600 dark:bg-indigo-400' : 'border-slate-400 dark:border-slate-500 group-hover:border-indigo-400'}`}>
+                                            {answers[idx] === opt._id && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
                                         </div>
                                         <input
-                                            type={q.type === 'single' ? 'radio' : 'checkbox'} // Note: Checkbox logic simplified here for now
+                                            type={q.type === 'single' ? 'radio' : 'checkbox'}
                                             name={`q-${idx}`}
                                             value={opt._id}
                                             checked={answers[idx] === opt._id}
                                             onChange={() => handleAnswer(idx, opt._id)}
-                                            className="hidden" // Hiding default radio
+                                            className="hidden"
                                         />
-                                        <span className={`text-gray-700 font-medium ${answers[idx] === opt._id ? 'text-indigo-900' : ''}`}>{opt.text}</span>
+                                        <span className={`text-base font-medium ${answers[idx] === opt._id ? 'text-indigo-900 dark:text-indigo-100' : 'text-slate-700 dark:text-slate-300'}`}>{opt.text}</span>
                                     </label>
                                 ))}
                             </div>
@@ -171,12 +169,13 @@ const ExamPortal = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="fixed bottom-0 w-full bg-white/80 backdrop-blur-md border-t p-4 z-20">
+                <div className="fixed bottom-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 p-4 z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
                     <div className="max-w-4xl mx-auto flex justify-between items-center">
-                        <div className="text-sm font-medium text-gray-500">
-                            <span className="text-indigo-600 font-bold">{Object.keys(answers).length}</span> of {test.questions.length} answered
+                        <div className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                            <span className="text-indigo-600 dark:text-indigo-400 font-bold text-lg mr-1">{Object.keys(answers).length}</span>
+                            of <span className="text-slate-700 dark:text-slate-300">{test.questions.length}</span> answered
                         </div>
-                        <Button onClick={() => handleSubmit(false)} className="px-8 py-2.5 text-base font-semibold shadow-lg shadow-indigo-500/30">
+                        <Button onClick={() => handleSubmit(false)} className="px-8 py-3 text-base font-bold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:-translate-y-0.5 transition-all">
                             Submit Test
                         </Button>
                     </div>
