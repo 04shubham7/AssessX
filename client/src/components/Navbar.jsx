@@ -5,7 +5,8 @@ import { Sun, Moon, LogOut, Shield, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 const Navbar = () => {
-    const { isDarkMode, toggleTheme } = useTheme();
+    const { theme, toggleTheme } = useTheme();
+    const isDarkMode = theme === 'dark';
     const navigate = useNavigate();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
