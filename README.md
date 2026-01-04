@@ -21,12 +21,13 @@
 
 ## ✨ Key Features
 
-- **🛡️ Secure Environment**: Real-time monitoring prevents malpractice.
+- **🛡️ Secure Environment**: Real-time monitoring prevents malpractice with Tab-Switch detection and Fullscreen enforcement.
 - **⚡ Real-time Updates**: Instant result calculation and status tracking via Socket.io.
+- **👁️ AI Proctoring**: (Beta) Client-side eye tracking and webcam monitoring.
 - **👨‍🏫 Admin Dashboard**: Comprehensive control to create, edit, and manage tests.
 - **👨‍🎓 Student Portal**: Intuitive interface for taking exams with timer and progress saving.
 - **📊 Visual Analytics**: Beautiful charts and graphs for result analysis.
-- **🎨 Modern UI**: Built with TailwindCSS, Framer Motion, and GSAP for a premium feel.
+- **🎨 Modern UI**: Built with TailwindCSS, Framer Motion, and GSAP. Features **Dark/Light Mode** and glassmorphism design.
 
 ## 🛠️ Technology Stack
 
@@ -40,8 +41,8 @@
 
 ## 📸 Screenshots
 
-### 🏠 Landing Page
-![Landing Page](docs/landing_page.png)
+### 🏠 Landing Page (New Redesign)
+![Landing Page](assets/landing_page_new.png)
 
 ### 🔐 Student Login
 ![Student Login](docs/student_login.png)

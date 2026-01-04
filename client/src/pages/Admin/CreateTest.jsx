@@ -87,6 +87,27 @@ const CreateTest = () => {
             // Validate Basic
             if (!testData.title) return alert('Title required');
 
+            // Validate Questions
+            if (questions.length === 0) return alert('At least one question is required');
+
+            for (let i = 0; i < questions.length; i++) {
+                if (!questions[i].questionText.trim()) {
+                    return alert(`Question ${i + 1} text is required`);
+                }
+                if (questions[i].options.length < 2) {
+                    return alert(`Question ${i + 1} must have at least 2 options`);
+                }
+                for (let j = 0; j < questions[i].options.length; j++) {
+                    if (!questions[i].options[j].text.trim()) {
+                        return alert(`Option ${j + 1} in Question ${i + 1} is required`);
+                    }
+                }
+                const correctOptions = questions[i].options.filter(o => o.isCorrect);
+                if (correctOptions.length === 0) {
+                    return alert(`Question ${i + 1} must have at least one correct option`);
+                }
+            }
+
             const payload = { ...testData, questions };
 
             await axios.post('http://localhost:5000/api/tests', payload, {
