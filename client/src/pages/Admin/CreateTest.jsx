@@ -91,20 +91,23 @@ const CreateTest = () => {
             if (questions.length === 0) return alert('At least one question is required');
 
             for (let i = 0; i < questions.length; i++) {
-                if (!questions[i].questionText.trim()) {
+                if (questions[i].questionText.trim() === '') {
                     return alert(`Question ${i + 1} text is required`);
                 }
-                if (questions[i].options.length < 2) {
-                    return alert(`Question ${i + 1} must have at least 2 options`);
-                }
-                for (let j = 0; j < questions[i].options.length; j++) {
-                    if (!questions[i].options[j].text.trim()) {
-                        return alert(`Option ${j + 1} in Question ${i + 1} is required`);
+
+                if (questions[i].type !== 'subjective') {
+                    if (questions[i].options.length < 2) {
+                        return alert(`Question ${i + 1} must have at least 2 options`);
                     }
-                }
-                const correctOptions = questions[i].options.filter(o => o.isCorrect);
-                if (correctOptions.length === 0) {
-                    return alert(`Question ${i + 1} must have at least one correct option`);
+                    for (let j = 0; j < questions[i].options.length; j++) {
+                        if (!questions[i].options[j].text.trim()) {
+                            return alert(`Option ${j + 1} in Question ${i + 1} is required`);
+                        }
+                    }
+                    const correctOptions = questions[i].options.filter(o => o.isCorrect);
+                    if (correctOptions.length === 0) {
+                        return alert(`Question ${i + 1} must have at least one correct option`);
+                    }
                 }
             }
 
@@ -198,6 +201,7 @@ const CreateTest = () => {
                                     >
                                         <option value="single">Single Correct</option>
                                         <option value="multiple">Multiple Correct</option>
+                                        <option value="subjective">Subjective (File Upload)</option>
                                     </select>
                                     <Input
                                         type="number"
@@ -207,43 +211,58 @@ const CreateTest = () => {
                                         placeholder="Marks"
                                     />
                                 </div>
+                                {q.type === 'subjective' && (
+                                    <div className="mt-2">
+                                        <label className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300">
+                                            <input
+                                                type="checkbox"
+                                                checked={q.allowFileUpload !== false}
+                                                onChange={(e) => updateQuestion(qIdx, 'allowFileUpload', e.target.checked)}
+                                                className="rounded text-indigo-600"
+                                            />
+                                            <span>Allow File Upload</span>
+                                        </label>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Options */}
-                            <div className="space-y-2 ml-4 border-l-2 border-gray-100 pl-4">
-                                {q.options.map((opt, oIdx) => (
-                                    <div key={oIdx} className="flex items-center space-x-3">
-                                        <input
-                                            type={q.type === 'single' ? 'radio' : 'checkbox'}
-                                            name={`q-${qIdx}`}
-                                            checked={opt.isCorrect}
-                                            onChange={(e) => {
-                                                if (q.type === 'single') {
-                                                    // Uncheck others
-                                                    const updated = [...questions];
-                                                    updated[qIdx].options.forEach(o => o.isCorrect = false);
-                                                    updated[qIdx].options[oIdx].isCorrect = true;
-                                                    setQuestions(updated);
-                                                } else {
-                                                    updateOption(qIdx, oIdx, 'isCorrect', e.target.checked);
-                                                }
-                                            }}
-                                        />
-                                        <Input
-                                            placeholder={`Option ${oIdx + 1}`}
-                                            value={opt.text}
-                                            onChange={(e) => updateOption(qIdx, oIdx, 'text', e.target.value)}
-                                            className="flex-1"
-                                        />
-                                        <button onClick={() => removeOption(qIdx, oIdx)} className="text-gray-400 hover:text-red-500">
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                ))}
-                                <Button variant="ghost" size="sm" onClick={() => addOption(qIdx)}>
-                                    <Plus className="w-3 h-3 mr-1" /> Add Option
-                                </Button>
-                            </div>
+                            {/* Options (Only for Single/Multiple) */}
+                            {q.type !== 'subjective' && (
+                                <div className="space-y-2 ml-4 border-l-2 border-gray-100 pl-4">
+                                    {q.options.map((opt, oIdx) => (
+                                        <div key={oIdx} className="flex items-center space-x-3">
+                                            <input
+                                                type={q.type === 'single' ? 'radio' : 'checkbox'}
+                                                name={`q-${qIdx}`}
+                                                checked={opt.isCorrect}
+                                                onChange={(e) => {
+                                                    if (q.type === 'single') {
+                                                        // Uncheck others
+                                                        const updated = [...questions];
+                                                        updated[qIdx].options.forEach(o => o.isCorrect = false);
+                                                        updated[qIdx].options[oIdx].isCorrect = true;
+                                                        setQuestions(updated);
+                                                    } else {
+                                                        updateOption(qIdx, oIdx, 'isCorrect', e.target.checked);
+                                                    }
+                                                }}
+                                            />
+                                            <Input
+                                                placeholder={`Option ${oIdx + 1}`}
+                                                value={opt.text}
+                                                onChange={(e) => updateOption(qIdx, oIdx, 'text', e.target.value)}
+                                                className="flex-1"
+                                            />
+                                            <button onClick={() => removeOption(qIdx, oIdx)} className="text-gray-400 hover:text-red-500">
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <Button variant="ghost" size="sm" onClick={() => addOption(qIdx)}>
+                                        <Plus className="w-3 h-3 mr-1" /> Add Option
+                                    </Button>
+                                </div>
+                            )}
                         </Card>
                     ))}
                 </div>
