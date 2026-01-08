@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const questionSchema = new mongoose.Schema({
     type: {
-        type: String, // 'single' or 'multiple'
+        type: String, // 'single', 'multiple', 'subjective'
         default: 'single'
     },
     questionText: {
@@ -16,6 +16,10 @@ const questionSchema = new mongoose.Schema({
         text: { type: String, required: true },
         isCorrect: { type: Boolean, default: false }
     }],
+    allowFileUpload: {
+        type: Boolean,
+        default: false
+    },
     marks: {
         type: Number,
         default: 1

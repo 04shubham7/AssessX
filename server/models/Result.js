@@ -40,7 +40,14 @@ const resultSchema = new mongoose.Schema({
     submittedAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    answers: [{
+        questionId: mongoose.Schema.Types.ObjectId,
+        type: String, // 'single', 'multiple', 'subjective'
+        response: mongoose.Schema.Types.Mixed, // Option ID(s) or File Path/Text
+        isCorrect: Boolean,
+        marksAwarded: Number
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Result', resultSchema);
