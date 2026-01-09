@@ -111,7 +111,14 @@ const CreateTest = () => {
                 }
             }
 
-            const payload = { ...testData, questions };
+            const sanitizedQuestions = questions.map(q => {
+                if (q.type === 'subjective') {
+                    return { ...q, options: [] };
+                }
+                return q;
+            });
+
+            const payload = { ...testData, questions: sanitizedQuestions };
 
             await axios.post('http://localhost:5000/api/tests', payload, {
                 headers: { Authorization: `Bearer ${token}` }
