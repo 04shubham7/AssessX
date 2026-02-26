@@ -3,15 +3,37 @@ import Webcam from 'react-webcam';
 import screenfull from 'screenfull';
 import { useSocket } from '../context/SocketContext';
 import { AlertTriangle, Camera, Eye } from 'lucide-react';
-// import * as faceapi from 'face-api.js'; // Deferred for AI step
+import * as faceapi from 'face-api.js';
 
 const ProctoringContainer = ({ children, testCode, onViolation }) => {
     const socket = useSocket();
     const [isWebcamActive, setIsWebcamActive] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [warnings, setWarnings] = useState([]);
+    const [isModelLoaded, setIsModelLoaded] = useState(false);
     const webcamRef = useRef(null);
     const warningTimeoutRef = useRef(null);
+    const intervalRef = useRef(null);
+
+    // 0. Load AI Models
+    useEffect(() => {
+        const loadModels = async () => {
+            try {
+                // Use public CDN for models to avoid local download issues
+                const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                ]);
+                setIsModelLoaded(true);
+                console.log("AI Models Loaded from CDN");
+            } catch (err) {
+                console.error("Failed to load AI models", err);
+                addWarning("AI Model Load Failed - Monitoring Limited");
+            }
+        };
+        loadModels();
+    }, []);
 
     // 1. Enforce Fullscreen
     useEffect(() => {
@@ -39,22 +61,57 @@ const ProctoringContainer = ({ children, testCode, onViolation }) => {
         return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
     }, []);
 
-    const addWarning = (msg) => {
-        const warning = { id: Date.now(), msg };
-        setWarnings(prev => [...prev, warning]);
-
-        if (onViolation) onViolation(msg);
-
-        // Emit to server
-        if (socket) {
-            socket.emit('proctoring-violation', { testCode, type: msg });
+    // 3. AI Monitoring Loop
+    useEffect(() => {
+        if (isWebcamActive && isModelLoaded && webcamRef.current?.video) {
+            intervalRef.current = setInterval(async () => {
+                detectFaces();
+            }, 2000); // Check every 2 seconds to reduce load
         }
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, [isWebcamActive, isModelLoaded]);
 
-        // Auto-clear visual warning after 5s
-        if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
-        warningTimeoutRef.current = setTimeout(() => {
-            setWarnings([]);
-        }, 5000);
+    const detectFaces = async () => {
+        if (!webcamRef.current || !webcamRef.current.video) return;
+
+        const video = webcamRef.current.video;
+        if (video.readyState !== 4) return;
+
+        const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+
+        if (detections.length === 0) {
+            // No face detected
+            addWarning("No face detected! Please stay in frame.");
+        } else if (detections.length > 1) {
+            // Multiple faces
+            addWarning("Multiple faces detected! Unauthorized person.");
+        } else {
+            // Single face - Check if looking away (Simple heuristic using landmarks)
+            //  const landmarks = detections[0].landmarks;
+            //  const leftEye = landmarks.getLeftEye();
+            //  const rightEye = landmarks.getRightEye();
+            // (Eye tracking logic is complex, keeping it simple for now: valid face found)
+        }
+    };
+
+    const addWarning = (msg) => {
+        // Prevent duplicate spamming of same warning
+        setWarnings(prev => {
+            const lastWarning = prev[prev.length - 1];
+            if (lastWarning && lastWarning.msg === msg && (Date.now() - lastWarning.id < 3000)) return prev;
+
+            // Emit violation
+            if (onViolation) onViolation(msg);
+            if (socket) socket.emit('proctoring-violation', { testCode, type: msg });
+
+            // Clear previous timeout
+            if (warningTimeoutRef.current) clearTimeout(warningTimeoutRef.current);
+            warningTimeoutRef.current = setTimeout(() => setWarnings([]), 5000);
+
+            return [...prev, { id: Date.now(), msg }];
+        });
     };
 
     const requestFullscreen = () => {
@@ -81,9 +138,16 @@ const ProctoringContainer = ({ children, testCode, onViolation }) => {
                         Initializing Camera...
                     </div>
                 )}
-                <div className="absolute top-1 right-1">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Monitoring Active"></div>
-                </div>
+                {isModelLoaded && isWebcamActive && (
+                    <div className="absolute top-1 right-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="AI Monitoring Active"></div>
+                    </div>
+                )}
+                {!isModelLoaded && (
+                    <div className="absolute top-1 right-1">
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" title="Loading Models..."></div>
+                    </div>
+                )}
             </div>
 
             {/* Warning Overlay */}
@@ -111,7 +175,7 @@ const ProctoringContainer = ({ children, testCode, onViolation }) => {
                         Enable Fullscreen to Start
                     </button>
                     <p className="mt-8 text-sm text-gray-500">
-                        Camera and screen monitoring are active.
+                        Camera and screen monitoring are active. {isModelLoaded ? "(AI Enabled)" : "(Loading AI...)"}
                     </p>
                 </div>
             ) : (

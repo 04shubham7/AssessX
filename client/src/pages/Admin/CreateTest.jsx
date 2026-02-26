@@ -26,6 +26,7 @@ const CreateTest = () => {
                 { text: '', isCorrect: false },
                 { text: '', isCorrect: false }
             ],
+            allowFileUpload: true, // Default to true
             marks: 1
         }
     ]);
@@ -46,6 +47,7 @@ const CreateTest = () => {
             questionText: '',
             type: 'single',
             options: [{ text: '', isCorrect: false }, { text: '', isCorrect: false }],
+            allowFileUpload: true,
             marks: 1
         }]);
     };

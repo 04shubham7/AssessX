@@ -92,6 +92,28 @@ const socketHandler = (io) => {
             }
         });
 
+        // STUDENT: Report Violation
+        socket.on('proctoring-violation', ({ testCode, type }) => {
+            const lobby = lobbies[testCode];
+            if (!lobby || !lobby.students[socket.id]) return;
+
+            const student = lobby.students[socket.id];
+            console.log(`Violation by ${student.name} in ${testCode}: ${type}`);
+
+            // Track violations in memory
+            if (!student.violationCount) student.violationCount = 0;
+            student.violationCount++;
+
+            // Broadcast to Admin (who is in the room 'testCode')
+            io.to(testCode).emit('proctoring-alert', {
+                studentName: student.name,
+                rollNumber: student.rollNumber,
+                type,
+                violationCount: student.violationCount,
+                time: Date.now()
+            });
+        });
+
         // STUDENT: Submit Test
         socket.on('submit-test', async ({ testCode, answers, timeTaken, violationCount }) => {
             const lobby = lobbies[testCode];
@@ -103,33 +125,51 @@ const socketHandler = (io) => {
             // Retrieve Test with answers (need to query DB again to be safe and secure)
             const test = await Test.findById(lobby.testId);
             let score = 0;
-            let correctCount = 0;
+            const answersToSave = [];
 
             test.questions.forEach((q, index) => {
-                const studentAnswer = answers[index]; // array of indices or values
-                if (!studentAnswer) return;
+                const studentAnswer = answers[index]; // option ID or file path/text
+                let isCorrect = false;
+                let marksAwarded = 0;
 
-                // Simple logic for single choice
+                if (!studentAnswer) {
+                    answersToSave.push({
+                        questionId: q._id,
+                        type: q.type,
+                        response: null,
+                        isCorrect: false,
+                        marksAwarded: 0
+                    });
+                    return;
+                }
+
                 if (q.type === 'single') {
                     const correctOption = q.options.find(o => o.isCorrect);
-                    // Assuming studentAnswer is the option ID or text. value matches?
-                    // Let's assume frontend sends the _id of the selected option.
-                    // BUT in createTest we didn't explicitly give IDs to options, Mongoose generates them if array of objects.
-                    // However, for simplicity let's compare text OR use index.
-                    // Let's assume studentAnswer matches the TEXT of the option or _id if present.
-                    // Since we strip correct answer, we probably send options array.
-                    // Let's assume checked against 'isCorrect' logic.
-
-                    // If we assume we compare by _id (which is safest if available) or text.
-                    // For now let's assume text comparison for robustness if IDs switch on update (unlikely but simple).
+                    // Match by ID if possible, else text. Since we only have text in options usually unless Mongoose added _ids.
+                    // In ExamPortal we use opt._id, so it should be an ID.
                     if (correctOption && studentAnswer === correctOption._id.toString()) {
                         score += q.marks;
                         correctCount++;
+                        isCorrect = true;
+                        marksAwarded = q.marks;
                     } else if (test.settings.negativeMarking) {
-                        // Negative marking
+                        // Negative marking logic here if needed
                     }
+                } else if (q.type === 'multiple') {
+                    // Basic exact match for multiple (if implemented later)
+                } else if (q.type === 'subjective') {
+                    // Manual grading needed. Mark as correct=false, score=0 initially? OR pending?
+                    // For now, simple logic: No auto score.
+                    isCorrect = false;
                 }
-                // TODO: Multiple choice logic
+
+                answersToSave.push({
+                    questionId: q._id,
+                    type: q.type,
+                    response: studentAnswer,
+                    isCorrect,
+                    marksAwarded
+                });
             });
 
             // Save Result
@@ -143,7 +183,8 @@ const socketHandler = (io) => {
                     totalQuestions: test.questions.length,
                     correctAnswers: correctCount,
                     timeTaken,
-                    violationCount
+                    violationCount,
+                    answers: answersToSave // Save detailed answers
                 });
 
                 socket.emit('result-published', { score, total: test.questions.length * 1 });
