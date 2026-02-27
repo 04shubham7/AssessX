@@ -5,6 +5,7 @@ import { Shield, Zap, Users, Monitor, ArrowRight, TrendingUp, Lock } from 'lucid
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Hero3D from '../components/Hero3D';
+import { Button } from '../components/ui/button';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,7 +14,7 @@ const LandingPage = () => {
     // Removed GSAP dependency in favor of Framer Motion for reliability
 
     return (
-        <div ref={containerRef} className="min-h-screen bg-slate-50 dark:bg-[#0B1120] text-slate-900 dark:text-slate-100 font-sans overflow-x-hidden selection:bg-indigo-500 selection:text-white transition-colors duration-500">
+        <div ref={containerRef} className="min-h-screen bg-background text-foreground font-sans overflow-x-hidden selection:bg-primary selection:text-primary-foreground transition-colors duration-500">
 
             {/* Background Decorations */}
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
@@ -58,24 +59,20 @@ const LandingPage = () => {
                             </p>
 
                             <div className="flex flex-wrap gap-4">
-                                <Link to="/auth/register">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="px-8 py-4 text-lg font-bold text-white bg-slate-900 dark:bg-white dark:text-slate-900 rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center gap-2"
-                                    >
-                                        Start for Free <ArrowRight className="w-5 h-5" />
-                                    </motion.button>
-                                </Link>
-                                <Link to="/student">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="px-8 py-4 text-lg font-bold text-slate-700 dark:text-white bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:bg-white dark:hover:bg-slate-800 transition-all"
-                                    >
-                                        Join Exam
-                                    </motion.button>
-                                </Link>
+                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                    <Button size="lg" className="px-8 py-6 text-lg font-bold rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center gap-2" asChild>
+                                        <Link to="/auth/register">
+                                            Start for Free <ArrowRight className="w-5 h-5" />
+                                        </Link>
+                                    </Button>
+                                </motion.div>
+                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                    <Button variant="outline" size="lg" className="px-8 py-6 text-lg font-bold rounded-xl shadow-sm transition-all bg-background/50 backdrop-blur-md" asChild>
+                                        <Link to="/student">
+                                            Join Exam
+                                        </Link>
+                                    </Button>
+                                </motion.div>
                             </div>
 
                             <div className="mt-10 flex items-center space-x-6 text-sm font-medium text-slate-500 dark:text-slate-500">

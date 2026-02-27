@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { Sun, Moon, LogOut, Shield, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { Button } from './ui/button';
 
 const Navbar = () => {
     const { theme, toggleTheme } = useTheme();
@@ -52,27 +53,24 @@ const Navbar = () => {
                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                     {adminName}
                                 </span>
-                                <Link to="/admin/dashboard" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Dashboard
-                                </Link>
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors"
-                                >
+                                <Button variant="ghost" asChild>
+                                    <Link to="/admin/dashboard">Dashboard</Link>
+                                </Button>
+                                <Button variant="destructive" onClick={handleLogout}>
                                     <LogOut className="w-4 h-4 mr-2" /> Logout
-                                </button>
+                                </Button>
                             </div>
                         ) : (
                             <div className="flex items-center space-x-4">
-                                <Link to="/student" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Join Test
-                                </Link>
-                                <Link to="/auth/login" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Admin Login
-                                </Link>
-                                <Link to="/auth/register" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-full transition-colors">
-                                    Sign Up
-                                </Link>
+                                <Button variant="ghost" asChild>
+                                    <Link to="/student">Join Test</Link>
+                                </Button>
+                                <Button variant="ghost" asChild>
+                                    <Link to="/auth/login">Admin Login</Link>
+                                </Button>
+                                <Button asChild className="rounded-full">
+                                    <Link to="/auth/register">Sign Up</Link>
+                                </Button>
                             </div>
                         )}
                     </div>
