@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSocket } from '../../context/SocketContext';
 import { Clock } from 'lucide-react';
-import Button from '../../components/Button';
+import { Button } from '../../components/ui/button';
 import ProctoringContainer from '../../components/ProctoringContainer';
 
 const ExamPortal = () => {
@@ -236,7 +236,7 @@ const ExamPortal = () => {
                             <span className="text-indigo-600 dark:text-indigo-400 font-bold text-lg mr-1">{Object.keys(answers).length}</span>
                             of <span className="text-slate-700 dark:text-slate-300">{test.questions.length}</span> answered
                         </div>
-                        <Button onClick={() => handleSubmit(false)} className="px-8 py-3 text-base font-bold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:-translate-y-0.5 transition-all">
+                        <Button size="lg" onClick={() => handleSubmit(false)} className="px-8 py-6 text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transform hover:-translate-y-0.5 transition-all">
                             Submit Test
                         </Button>
                     </div>

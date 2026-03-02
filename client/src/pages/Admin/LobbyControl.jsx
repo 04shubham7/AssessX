@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useSocket } from '../../context/SocketContext';
 import { Users, Play, Square, Trophy } from 'lucide-react';
-import Button from '../../components/Button';
-import { Card, CardHeader } from '../../components/Layout';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
 
 const LobbyControl = () => {
     const { testCode } = useParams();
@@ -79,81 +79,96 @@ const LobbyControl = () => {
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8 transition-colors duration-300">
             <div className="max-w-6xl mx-auto space-y-6">
-                <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">{testDetails?.title || 'Loading...'}</h1>
-                        <p className="text-gray-500">Code: <span className="font-mono font-bold text-lg text-indigo-600">{testCode}</span></p>
+                <Card className="flex flex-col md:flex-row justify-between items-center p-6 border-border/50 shadow-sm bg-card/60 backdrop-blur-sm">
+                    <div className="mb-4 md:mb-0">
+                        <h1 className="text-2xl font-bold text-foreground">{testDetails?.title || 'Loading...'}</h1>
+                        <p className="text-muted-foreground mt-1">Code: <span className="font-mono font-bold text-lg text-primary">{testCode}</span></p>
                     </div>
 
-                    <div className="flex items-center space-x-4">
-                        <div className="text-right mr-4">
-                            <p className="text-sm text-gray-500">Status</p>
-                            <p className={`font-bold uppercase ${testStatus === 'running' ? 'text-green-600' : 'text-gray-600'}`}>{testStatus}</p>
+                    <div className="flex items-center space-x-6">
+                        <div className="text-right">
+                            <p className="text-sm text-muted-foreground mb-1">Status</p>
+                            <div className="flex items-center">
+                                <span className="relative flex h-3 w-3 mr-2">
+                                    {testStatus === 'running' && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>}
+                                    <span className={`relative inline-flex rounded-full h-3 w-3 ${testStatus === 'running' ? 'bg-green-500' : testStatus === 'waiting' ? 'bg-yellow-500' : 'bg-gray-500'}`}></span>
+                                </span>
+                                <p className={`font-bold uppercase tracking-wider text-sm ${testStatus === 'running' ? 'text-green-500' : 'text-muted-foreground'}`}>{testStatus}</p>
+                            </div>
                         </div>
 
                         {testStatus === 'waiting' && (
-                            <Button onClick={handleStart} className="bg-green-600 hover:bg-green-700">
+                            <Button onClick={handleStart} className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20">
                                 <Play className="w-5 h-5 mr-2" /> Start Test
                             </Button>
                         )}
 
                         {testStatus === 'running' && (
-                            <Button onClick={handleStop} variant="danger">
+                            <Button onClick={handleStop} variant="destructive" className="shadow-lg shadow-red-600/20">
                                 <Square className="w-5 h-5 mr-2" /> Stop Test
                             </Button>
                         )}
 
                         {testStatus === 'finished' && (
-                            <Link to={`/admin/results/${testDetails?._id}`}>
-                                <Button variant="secondary">
-                                    <Trophy className="w-5 h-5 mr-2" /> View Results
-                                </Button>
-                            </Link>
+                            <Button variant="secondary" asChild className="shadow-lg">
+                                <Link to={`/admin/results/${testDetails?._id}`}>
+                                    <Trophy className="w-5 h-5 mr-2 text-yellow-500" /> View Results
+                                </Link>
+                            </Button>
                         )}
                     </div>
-                </div>
+                </Card>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <Card className="md:col-span-3">
-                        <CardHeader
-                            title="Live Student Lobby"
-                            description={`${students.length} students joined`}
-                        />
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {students.map((student, idx) => (
-                                <div key={idx} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-md border border-gray-100">
-                                    <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                                        {student.name.charAt(0).toUpperCase()}
+                    <Card className="md:col-span-3 border-border/50 shadow-sm bg-card/60 backdrop-blur-sm">
+                        <CardHeader>
+                            <CardTitle>Live Student Lobby</CardTitle>
+                            <CardDescription>{students.length} students joined</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {students.map((student, idx) => (
+                                    <div key={idx} className="flex items-center space-x-3 p-3 bg-secondary/30 rounded-lg border border-border/50 hover:border-primary/30 transition-colors">
+                                        <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg shadow-inner">
+                                            {student.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="overflow-hidden flex-1">
+                                            <p className="text-sm font-semibold text-foreground truncate">{student.name}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{student.rollNumber}</p>
+                                        </div>
                                     </div>
-                                    <div className="overflow-hidden">
-                                        <p className="text-sm font-medium text-gray-900 truncate">{student.name}</p>
-                                        <p className="text-xs text-gray-500 truncate">{student.rollNumber}</p>
+                                ))}
+                                {students.length === 0 && (
+                                    <div className="col-span-full py-12 text-center text-muted-foreground/60 italic border-2 border-dashed border-border/50 rounded-lg">
+                                        <div className="flex flex-col items-center justify-center space-y-3">
+                                            <Users className="w-8 h-8 opacity-20" />
+                                            <p>Waiting for students to join...</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                            {students.length === 0 && (
-                                <div className="col-span-full py-8 text-center text-gray-400 italic">
-                                    Waiting for students to join...
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
+                        </CardContent>
                     </Card>
 
                     <div className="space-y-6">
-                        <Card>
-                            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                <Users className="w-5 h-5 mr-2" /> Quick Stats
-                            </h3>
-                            <div className="space-y-3">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Total Joined</span>
-                                    <span className="font-bold">{students.length}</span>
+                        <Card className="border-border/50 shadow-sm bg-card/60 backdrop-blur-sm">
+                            <CardHeader>
+                                <CardTitle className="flex items-center text-lg">
+                                    <Users className="w-5 h-5 mr-2 text-primary" /> Quick Stats
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center bg-secondary/20 p-3 rounded-md">
+                                        <span className="text-muted-foreground text-sm font-medium">Total Joined</span>
+                                        <span className="font-bold text-lg text-primary">{students.length}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center bg-secondary/20 p-3 rounded-md">
+                                        <span className="text-muted-foreground text-sm font-medium">Duration</span>
+                                        <span className="font-bold text-foreground">{testDetails?.duration} mins</span>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500">Duration</span>
-                                    <span className="font-bold">{testDetails?.duration} mins</span>
-                                </div>
-                            </div>
+                            </CardContent>
                         </Card>
                     </div>
                 </div>

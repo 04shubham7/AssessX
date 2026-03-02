@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSocket } from '../../context/SocketContext';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { Card } from '../../components/Layout';
+import { Card, CardContent } from '../../components/ui/card';
 
 const WaitingRoom = () => {
     const { testCode } = useParams();
@@ -56,11 +56,13 @@ const WaitingRoom = () => {
     if (status === 'error') {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-                <Card className="text-center max-w-md">
-                    <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Error</h2>
-                    <p className="text-gray-600 mb-4">{message}</p>
-                    <button onClick={() => navigate('/')} className="text-indigo-600 font-medium">Go Back</button>
+                <Card className="text-center max-w-md border-destructive/20 shadow-sm bg-card/60 backdrop-blur-sm">
+                    <CardContent className="pt-6">
+                        <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+                        <h2 className="text-xl font-bold text-foreground mb-2">Error</h2>
+                        <p className="text-muted-foreground mb-6">{message}</p>
+                        <button onClick={() => navigate('/')} className="text-primary font-medium hover:underline">Go Back</button>
+                    </CardContent>
                 </Card>
             </div>
         );

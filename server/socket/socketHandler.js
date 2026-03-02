@@ -125,6 +125,7 @@ const socketHandler = (io) => {
             // Retrieve Test with answers (need to query DB again to be safe and secure)
             const test = await Test.findById(lobby.testId);
             let score = 0;
+            let correctCount = 0;
             const answersToSave = [];
 
             test.questions.forEach((q, index) => {

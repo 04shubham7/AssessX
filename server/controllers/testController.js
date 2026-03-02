@@ -1,11 +1,32 @@
+const { z } = require('zod');
 const Test = require('../models/Test');
+
+const testSchema = z.object({
+    title: z.string().min(1, { message: 'Title is required' }),
+    duration: z.number().min(1, { message: 'Duration must be at least 1 minute' }),
+    settings: z.object({
+        negativeMarking: z.boolean().optional(),
+        shuffleQuestions: z.boolean().optional()
+    }).optional(),
+    questions: z.array(z.object({
+        questionText: z.string().min(1, { message: 'Question text is required' }),
+        type: z.enum(['single', 'multiple', 'subjective']),
+        marks: z.number().positive(),
+        allowFileUpload: z.boolean().optional(),
+        options: z.array(z.object({
+            text: z.string(),
+            isCorrect: z.boolean()
+        })).optional()
+    })).min(1, { message: 'At least one question is required' })
+});
 
 // @desc    Create a new test
 // @route   POST /api/tests
 // @access  Private (Admin)
 const createTest = async (req, res) => {
     try {
-        const { title, questions, duration, settings } = req.body;
+        const validatedData = testSchema.parse(req.body);
+        const { title, questions, duration, settings } = validatedData;
 
         // Generate a unique 6-digit test code
         let testCode;
@@ -27,6 +48,9 @@ const createTest = async (req, res) => {
 
         res.status(201).json(test);
     } catch (error) {
+        if (error instanceof z.ZodError) {
+            return res.status(400).json({ message: error.errors[0].message });
+        }
         console.error(error);
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(val => val.message);

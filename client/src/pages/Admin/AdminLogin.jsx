@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import { Card, CardHeader } from '../../components/Layout';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import { Label } from '../../components/ui/label';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
@@ -30,39 +31,45 @@ const AdminLogin = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-            <Card className="w-full max-w-md">
-                <CardHeader
-                    title="Admin Login"
-                    description="Sign in to manage tests and results"
-                />
-                <form className="space-y-6" onSubmit={handleLogin}>
-                    {error && <div className="bg-red-50 text-red-500 p-2 rounded text-sm">{error}</div>}
+        <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+            <Card className="w-full max-w-md border-border/50 shadow-lg group hover:shadow-xl transition-all">
+                <CardHeader className="space-y-1 pb-6">
+                    <CardTitle className="text-3xl font-bold tracking-tight">Admin Login</CardTitle>
+                    <CardDescription className="text-muted-foreground">
+                        Sign in to manage tests and results
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form className="space-y-6" onSubmit={handleLogin}>
+                        {error && <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm font-medium">{error}</div>}
 
-                    <Input
-                        label="Email Address"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email Address</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
 
-                    <Input
-                        label="Password"
-                        type="password"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full"
-                        isLoading={loading}
-                    >
-                        Sign in
-                    </Button>
-                </form>
+                        <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                            {loading ? 'Signing in...' : 'Sign in'}
+                        </Button>
+                    </form>
+                </CardContent>
             </Card>
         </div>
     );

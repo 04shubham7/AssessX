@@ -19,14 +19,14 @@ const ProctoringContainer = ({ children, testCode, onViolation }) => {
     useEffect(() => {
         const loadModels = async () => {
             try {
-                // Use public CDN for models to avoid local download issues
-                const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+                // Use local models folder
+                const MODEL_URL = '/models';
                 await Promise.all([
                     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
                     faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
                 ]);
                 setIsModelLoaded(true);
-                console.log("AI Models Loaded from CDN");
+                console.log("AI Models Loaded Locally");
             } catch (err) {
                 console.error("Failed to load AI models", err);
                 addWarning("AI Model Load Failed - Monitoring Limited");
